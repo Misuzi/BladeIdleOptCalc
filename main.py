@@ -105,7 +105,7 @@ def main():
         print(numbas.option_matrix)
         print(decision_matrix)
     final_dmg = calculate_dmg(base_stats, numbas.option_matrix, decision_matrix)
-    print_results(numbas.name_array, decision_matrix, final_dmg)
+    print_results(base_stats, numbas.option_matrix, numbas.name_array, decision_matrix)
     return 0
 
 # Returns total damage as MULTIPLIER not a PERCENTAGE
@@ -129,7 +129,9 @@ def calculate_dmg(this_base_stats, this_option_matrix, this_decision_matrix):
 
     return total_dmg
 
-def print_results(name_array, decision_matrix, final_dmg):
+def print_results(base_stats, option_matrix, name_array, decision_matrix):
+
+    # Tabulate best option for each equipment
     num_options = len(name_array)
     option_string = ""
     output_table = []
@@ -140,7 +142,31 @@ def print_results(name_array, decision_matrix, final_dmg):
         #print(name_array[i] + ": " + str(option_name_dict[np.where(decision_matrix[i] == 1)[0][0]]))
         output_table.append(table_entry)
 
+
+    # Calculate and tabulate total stats
+    total_stats = base_stats.copy()
+    num_options = option_matrix.shape[0]
+    num_stats   = option_matrix.shape[1]
+
+    for i in range(num_options):
+        for j in range(num_stats):
+            total_stats[j] += decision_matrix[i][j] * option_matrix[i][j]
+
+    stat_table = []
+    for i in range(num_stats):
+        table_entry = []
+        table_entry.append(total_stats[i])
+        table_entry.append(str(option_name_dict[i]))
+        stat_table.append(table_entry)
+
+    # Calculate Final Damage
+    final_dmg = calculate_dmg(base_stats, numbas.option_matrix, decision_matrix)
+
+    # Print Results
     print(tabulate(output_table, headers=["Equipment", "Optimal Option"]))
+    print("\n")
+    print(tabulate(stat_table, headers=["Total", "Option"]))
+    print("\n")
     print("Final Total Attack Multiplier: " + str(final_dmg))
     return 0
 
