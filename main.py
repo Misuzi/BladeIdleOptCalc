@@ -67,7 +67,8 @@ def main():
         for i in range(num_options):
             best_subgroup_dmg = calculate_dmg(base_stats, numbas.option_matrix, best_subgroup_decision_matrix)
             for j in range(num_stats):
-                cur_decision_matrix = best_subgroup_decision_matrix.copy()
+                #cur_decision_matrix = best_subgroup_decision_matrix.copy() # This makes it faster but probably not global maximum
+                cur_decision_matrix = best_decision_matrix.copy()
                 cur_decision_matrix[i] = np.zeros(num_stats)
                 cur_decision_matrix[i][j] = 1
                 cur_dmg = calculate_dmg(base_stats, numbas.option_matrix, cur_decision_matrix)
